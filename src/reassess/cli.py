@@ -4,22 +4,24 @@ import argparse
 import sys
 from pathlib import Path
 
-from reassess.games import import_game_from_pgn
+from reassess.engine import analyze_game
+from reassess.games import import_game_from_pgn, to_record_game
 
 
 def built_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="reassess", description="Chess game analyzer")
     parser.add_argument("pgn", type=Path, help="Path to the PGN-file with game")
-    parser.add_argument("--depth", type=int, default=10, help="Stockfish analysis depth")
+    parser.add_argument(
+        "-d",
+        "--depth",
+        type=int,
+        default=10,
+        help="Stockfish analysis depth (default is %(default)s)",
+    )
+    parser.add_argument(
+        "-f", "--format", choices=["text", "pgn", "json"], default="text", help="The output format"
+    )
     return parser
-
-
-def get_position():
-    return 0
-
-
-def count_material():
-    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -32,5 +34,10 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as error:
         print(error, file=sys.stderr)
         return 1
-    print(f"{game.headers.get('White', '?')} - {game.headers.get('Black', '?')}")
+
+    game_record = to_record_game(game)
+    game_analysis = analyze_game(game_record)
+
+    print(game_analysis)
+
     return 0
