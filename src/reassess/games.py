@@ -9,6 +9,17 @@ from reassess.models import FullMove, GameRecord, Ply
 
 
 def import_game_from_pgn(path: Path) -> chess.pgn.Game:
+    """Load the first game from a UTF-8 encoded PGN file
+
+    Args:
+        ""path: Path to the source file.
+        If the file contains multiple games, only the first game will be loaded"
+    Returns:
+          Parsed game tree from 'python-chess'.
+    Raises:
+          ValueError: If the file is empty or contains no valid PGN games.
+          OSError: If the file cannot be opened or read.
+    """
     with path.open(encoding="utf-8") as f:
         game = chess.pgn.read_game(f)
     if game is None:
@@ -17,6 +28,13 @@ def import_game_from_pgn(path: Path) -> chess.pgn.Game:
 
 
 def to_record_game(game: chess.pgn.Game) -> GameRecord:
+    """Convert a game tree into an immutable GameRecord.
+
+    Args:
+          game: Source game tree to convert.
+    Returns:
+          Normilized 'GameRecord' containing PGN headers and sequential plies.
+    """
     headers = game.headers
     board = game.board()
     plies: list[Ply] = []

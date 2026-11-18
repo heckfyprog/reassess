@@ -8,7 +8,8 @@ from reassess.engine import analyze_game
 from reassess.games import import_game_from_pgn, to_record_game
 
 
-def built_parser() -> argparse.ArgumentParser:
+def build_parser() -> argparse.ArgumentParser:
+    """Create and configure the CLI argument parser"""
     parser = argparse.ArgumentParser(prog="reassess", description="Chess game analyzer")
     parser.add_argument("pgn", type=Path, help="Path to the PGN-file with game")
     parser.add_argument(
@@ -25,7 +26,7 @@ def built_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = built_parser().parse_args(argv)
+    args = build_parser().parse_args(argv)
     if not args.pgn.is_file():
         print(f"File not found: {args.pgn}", file=sys.stderr)
         return 1
