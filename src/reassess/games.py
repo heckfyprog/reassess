@@ -47,7 +47,7 @@ def to_record_game(game: chess.pgn.Game) -> GameRecord:
         san = board.san(move)
         board.push(move)
         fen_after = board.fen()
-        plies.append(Ply(len(plies) + 1, piece, san, move.uci(), fen_before, fen_after))
+        plies.append(Ply(len(plies) + 1, piece.symbol(), san, move.uci(), fen_before, fen_after))
 
     full_moves: list[FullMove] = []
 
