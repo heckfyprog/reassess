@@ -1,5 +1,6 @@
 # Import/Export games
 
+from collections.abc import Sequence
 from pathlib import Path
 
 import chess
@@ -27,6 +28,29 @@ def import_game_from_pgn(path: Path) -> chess.pgn.Game:
     return game
 
 
+def group_into_full_moves(plies: Sequence[Ply], start_number: int = 1) -> tuple[FullMove, ...]:
+    """Group plies into full moves (white + black pair).
+
+    Handles games started with Black's move and an unfinished last move.
+    """
+    full_moves: list[FullMove] = []
+    number = start_number
+    i = 0
+
+    if plies and not plies[0].is_white:
+        full_moves.append(FullMove(number, None, plies[0]))
+        number += 1
+        i = 1
+
+    while i < len(plies):
+        black = plies[i + 1] if i + 1 < len(plies) else None
+        full_moves.append(FullMove(number, plies[i], black))
+        number += 1
+        i += 2
+
+    return tuple(full_moves)
+
+
 def to_record_game(game: chess.pgn.Game) -> GameRecord:
     """Convert a game tree into an immutable GameRecord.
 
@@ -37,6 +61,7 @@ def to_record_game(game: chess.pgn.Game) -> GameRecord:
     """
     headers = game.headers
     board = game.board()
+    start_number = board.fullmove_number
     plies: list[Ply] = []
 
     for node in game.mainline():
@@ -49,7 +74,5 @@ def to_record_game(game: chess.pgn.Game) -> GameRecord:
         fen_after = board.fen()
         plies.append(Ply(len(plies) + 1, piece.symbol(), san, move.uci(), fen_before, fen_after))
 
-    full_moves: list[FullMove] = []
-
-    game_record = GameRecord(headers=dict(headers), plies=tuple(plies), moves=tuple(full_moves))
-    return game_record
+    moves = group_into_full_moves(plies, start_number)
+    return GameRecord(headers=dict(headers), plies=tuple(plies), moves=moves)
