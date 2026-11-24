@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 from reassess.engine import analyze_game
-from reassess.games import import_game_from_pgn, to_record_game
+from reassess.games import import_game_from_pgn_file, to_record_game
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -31,7 +31,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"File not found: {args.pgn}", file=sys.stderr)
         return 1
     try:
-        game = import_game_from_pgn(args.pgn)
+        game = import_game_from_pgn_file(args.pgn)
     except ValueError as error:
         print(error, file=sys.stderr)
         return 1

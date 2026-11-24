@@ -9,7 +9,7 @@ import chess.pgn
 from reassess.models import FullMove, GameRecord, Ply
 
 
-def import_game_from_pgn(path: Path) -> chess.pgn.Game:
+def import_game_from_pgn_file(path: Path) -> chess.pgn.Game:
     """Load the first game from a UTF-8 encoded PGN file
 
     Args:
