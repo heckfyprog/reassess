@@ -4,7 +4,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from reassess.engine import analyze_game
+from reassess.engine import to_analyze_game
 from reassess.games import import_game_from_pgn_file, to_record_game
 
 
@@ -37,7 +37,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     game_record = to_record_game(game)
-    game_analysis = analyze_game(game_record)
+    game_analysis = to_analyze_game(game_record)
 
     print(game_analysis)
 

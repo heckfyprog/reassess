@@ -27,3 +27,20 @@ class GameRecord:
     headers: dict[str, str]
     plies: tuple[Ply, ...]
     moves: tuple[FullMove, ...]
+
+
+@dataclass(frozen=True)
+class PlyAnalysis:
+    ply: Ply
+    eval_before: str
+    eval_after: str
+    cp_loss: int
+    classification: str
+
+
+@dataclass(frozen=True)
+class GameAnalysis:
+    mainline: GameRecord
+    ply_analyses: tuple[PlyAnalysis, ...]
+    white_accuracy: float
+    black_accuracy: float
